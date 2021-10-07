@@ -178,6 +178,40 @@
 				$("#input_dialog").dialog("close");
 			}
 			
+			//수정 처리
+			var editContact = function(no) {
+				$.get("/contact/search.do", { no : no }, function(data) {
+					var data = JSON.parse(data);
+					
+					if(data.errorMessage) {
+						alert(data.errorMessage);
+					} else {
+						var dialog = $("#input_dialog");
+						//find() : 해당 요소를 찾아서 선택
+						//input 필드의 값 세팅
+						dialog.find("#no").val(data.no);
+						dialog.find("#name").val(data.name);
+						dialog.find("#tel").val(data.tel);
+						dialog.find("#address").val(data.address);
+						
+						//dialog 오픈
+						dialog.dialog({
+							autoOpen : true,
+							modal : true,
+							buttons : {
+								"수정" : updateContact,
+								"취소" : cancelInput
+							}
+						});
+					}
+				});
+			}
+			
+			//삭제 처리
+			var deleteContact = function(no) {
+				
+			}
+			
 			// 3. 이벤트 함수
 			$(document).ajaxStart(function() {
 				//ajax 호출 시 로딩 표시
@@ -201,6 +235,18 @@
 				});
 				//다이얼로그(모달) 창 오픈
 				$("#input_dialog").dialog("open");
+			});
+			
+			//수정 버튼 클릭 시 발생 이벤트
+			$("#contactlist").on("click", "button.update", function() {
+				var no = $(this).data("no");
+				editContact(no);
+			});
+			
+			//삭제 버튼 클릭 시 발생 이벤트
+			$("#contactlist").on("click", "button.delete", function() {
+				var no = $(this).data("no");
+				deleteContact(no);
 			});
 			
 			// 4. 화면 초기화 코드
